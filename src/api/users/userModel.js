@@ -114,7 +114,9 @@ module.exports = {
     },
     sendCreateEmail: (email, name, username, callback) => {
         var transporter = nodemailer.createTransport({
-            service: 'gmail',
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
             auth: {
                 user: "sandetechtips265@gmail.com",
                 pass: process.env.MAIL_PASS
@@ -146,7 +148,9 @@ module.exports = {
     },
     sendVerifiedEmail: (email, callback) => {
         var transporter = nodemailer.createTransport({
-            service: 'gmail',
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
             auth: {
                 user: "sandetechtips265@gmail.com",
                 pass: process.env.MAIL_PASS
