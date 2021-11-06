@@ -123,7 +123,7 @@ module.exports = {
         let year = new Date().getFullYear()
         let token = generateToken(username, email, name)
         let base_url = process.env.BASE_URL
-        let url = `https://${base_url}/api/verify?token=${token}`
+        let url = `${base_url}/api/verify?token=${token}`
         var mailOptions = {
             from: '"No-Reply" <sandetechtips265@gmail.com>',
             to: email,
@@ -135,7 +135,7 @@ module.exports = {
                 <a href=${url} rel="noreferrer target="_blank">Click Here</a> to verify you account, Please verify your account within 1 Hour,<br />
                 Thank you.</p><br />
                 <br />
-                <a href="https://${base_url}/api/new-request?token=${token}" rel="noreferrer" target="_blank">Request New Link.</a>
+                <a href="${base_url}/api/new-request?token=${token}" rel="noreferrer" target="_blank">Request New Link.</a>
                 <p>&copy; ${year} Mero Portfolio, All Rights Reserved</p>
             `
         };
