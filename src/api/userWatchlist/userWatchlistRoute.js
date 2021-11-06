@@ -8,5 +8,4 @@ router.get("/config/:id", verifyToken, getWatchlist);
 router.patch("/config/:id", verifyToken, updateWatchList);
 router.delete("/config/:id", verifyToken, deleteWatchlist)
 
-
 module.exports = router

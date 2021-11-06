@@ -15,5 +15,13 @@ module.exports = {
             return ucFirst(item)
         })
         return array.join(" ")
+    },
+    checkTokenExpiry: (token) => {
+        if (!token && isEmpty(token))
+            return false
+        else if (token.exp < Date.now() / 1000) {
+            return false
+        }
+        return true
     }
 }

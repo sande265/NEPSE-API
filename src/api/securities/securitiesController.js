@@ -12,6 +12,11 @@ module.exports = {
             for (var i = 0; i < body.length; i++) {
                 let item = body[i];
                 if (i === (body.length - 1)) {
+                    create(item, (err, result) => {
+                        if (err) {
+                            console.log("err", err);
+                        }
+                    })
                     res.status(200).json({
                         message: 'All Items Added Successfully',
                     })
@@ -138,4 +143,30 @@ module.exports = {
             })
         })
     },
+    fetchSecurities: async (req, res) => {
+        var response = await axios.get('https://bishaludas.github.io/NEPSE-Api/api/todayshare.json');
+        const body = response.data;
+        deleteAllSecurity((err) => {
+            if (err) console.log('err deleteing', err);
+        });
+        if (Array.isArray(body)) {
+            for (var i = 0; i < body.length; i++) {
+                let item = body[i]
+                if (i === (body.length - 1)) {
+                    res.status(200).json({
+                        message: 'Fetched Data Successfully'
+                    })
+                }
+                else create(item, (err, result) => {
+                    if (err) {
+                        console.log("err", err);
+                    }
+                })
+            }
+        } else {
+            res.status(500).json({
+                message: 'Fetching Data Failed in a Generic way.'
+            })
+        }
+    }
 }

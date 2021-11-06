@@ -1,5 +1,6 @@
 const pool = require("../../database/database")
-
+const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer')
 
 module.exports = {
     create: (data, callback) => {
@@ -13,7 +14,7 @@ module.exports = {
                 data.email,
                 data.role ? data.role : 'user',
                 data.image,
-                parseInt(data.status) === 1 || data.status === true ? 1 : 0,
+                0,
                 data.contact,
             ], (error, result) => {
                 if (error) return callback(error)
@@ -56,8 +57,21 @@ module.exports = {
                 updated_at,
                 parseInt(data.status) === 1 || data.status == true ? 1 : 0,
                 data.contact,
-                1,
+                data.first_login ? data.first_login : '',
                 id
+            ],
+            (error, result) => {
+                if (error) return callback(error)
+                return callback(null, result)
+            }
+        )
+    },
+    updateStatus: (username, callback) => {
+        pool.query(
+            `UPDATE user SET status=? WHERE username = ?`,
+            [
+                1,
+                username
             ],
             (error, result) => {
                 if (error) return callback(error)
@@ -97,5 +111,70 @@ module.exports = {
                 return callback(null, result)
             }
         )
-    }
+    },
+    sendCreateEmail: (email, name, username, callback) => {
+        var transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: "sandetechtips265@gmail.com",
+                pass: process.env.MAIL_PASS
+            }
+        })
+        let year = new Date().getFullYear()
+        let token = generateToken(username, email, name)
+        let base_url = process.env.BASE_URL
+        let url = `https://${base_url}/api/verify?token=${token}`
+        var mailOptions = {
+            from: '"No-Reply" <sandetechtips265@gmail.com>',
+            to: email,
+            subject: 'New Account.',
+            html: `
+                <h3>Registration Successfull</h3>
+                <p>Hello ${name},<p>
+                <p>Your account has been created successfully.<br />
+                <a href=${url} rel="noreferrer target="_blank">Click Here</a> to verify you account, Please verify your account within 1 Hour,<br />
+                Thank you.</p><br />
+                <br />
+                <a href="https://${base_url}/api/new-request?token=${token}" rel="noreferrer" target="_blank">Request New Link.</a>
+                <p>&copy; ${year} Mero Portfolio, All Rights Reserved</p>
+            `
+        };
+        transporter.sendMail(mailOptions, (err, result) => {
+            if (err) return callback(err)
+            return callback(null, result)
+        })
+    },
+    sendVerifiedEmail: (email, callback) => {
+        var transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: "sandetechtips265@gmail.com",
+                pass: process.env.MAIL_PASS
+            }
+        })
+        let year = new Date().getFullYear()
+        var mailOptions = {
+            from: '"No-Reply" <sandetechtips265@gmail.com>',
+            to: email,
+            subject: 'Account Verification Successful.',
+            html: `
+                <h3>Verification Successfull</h3>
+                <span>Your account has been successfully verified, now you can access all services without restriction.
+                Thank you.</p><br />
+                <br />
+                <a href="https://mero-portfolio.dev.sandeshsingh.com.np/login" rel="noreferrer" target="_blank">Login to your account</a>
+                <p>&copy; ${year} Mero Portfolio, All Rights Reserved</p>
+            `
+        };
+        transporter.sendMail(mailOptions, (err, result) => {
+            if (err) return callback(err)
+            return callback(null, result)
+        })
+    },
+}
+
+
+const generateToken = (username, email, name) => {
+    let token = jwt.sign({ sub: username, email: email, name: name }, process.env.JWT_SECRET, { expiresIn: '1h' })
+    return token
 }

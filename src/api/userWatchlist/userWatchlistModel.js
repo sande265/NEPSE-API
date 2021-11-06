@@ -1,13 +1,19 @@
 const pool = require("../../database/database")
 
 module.exports = {
-    create: (data, callback) => {
+    create: (id, data, callback) => {
         pool.query(
-            `INSERT into user_config (user_id, scrips)
-                    values(?,?)`,
+            `INSERT into user_securities(user_id, name, qty, buy_price, type, buy_date, sell_price, action)
+                    values(?,?,?,?,?,?,?,?)`,
             [
-                data.user_id,
-                JSON.stringify(data.scrips),
+                id,
+                data.name,
+                data.qty,
+                data.buy_price,
+                data.type,
+                data.buy_date,
+                data.sell_price,
+                parseInt(data.action)
             ],
             (error, result) => {
                 if (error) return callback(error)
@@ -15,10 +21,10 @@ module.exports = {
             }
         )
     },
-    getAll: callback => {
+    getAll: (id, callback) => {
         pool.query(
-            `SELECT scrips, id, user_id from user_config`,
-            [],
+            `SELECT * from user_securities where user_id=?`,
+            [id],
             (error, result) => {
                 if (error) return callback(error)
                 return callback(null, result)
@@ -27,7 +33,7 @@ module.exports = {
     },
     getConfig: (id, callback) => {
         pool.query(
-            `SELECT * from user_config where id = ?`,
+            `SELECT * from user_securities where id = ?`,
             [id],
             (error, result) => {
                 if (error) return callback(error)
@@ -36,13 +42,16 @@ module.exports = {
         )
     },
     update: (id, data, callback) => {
-        const updated_at = new Date()
-        updated_at.toLocaleDateString('fr-CA', { year: 'numeric', month: '2-digit', day: '2-digit' })
         pool.query(
-            `UPDATE user_config set scrips=? , updated_at=? where id = ?`,
+            `UPDATE user_securities SET name=?, qty=?, buy_price=?, type=?, buy_date=?, sell_price=?, action=? where user_id = ?`,
             [
-                JSON.stringify(data.scrips),
-                updated_at,
+                data.name,
+                data.qty,
+                data.buy_price,
+                data.type,
+                data_buy_date,
+                data.sell_price,
+                data.action,
                 id
             ],
             (error, result) => {
@@ -53,7 +62,7 @@ module.exports = {
     },
     deleteWatchlist: (id, callback) => {
         pool.query(
-            `DELETE from user_config where id = ?`,
+            `DELETE from user_securities where id = ?`,
             [id],
             (error, result) => {
                 if (error) return callback(error)

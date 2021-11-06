@@ -43,7 +43,7 @@ app.use('/uploads', express.static('uploads'))
  */
 
 
-cron.schedule('0 15 * * 0-5', async () => {
+cron.schedule('0 15 * * 0-4', async () => {
     var response = await axios.get('https://bishaludas.github.io/NEPSE-Api/api/todayshare.json');
     const body = response.data;
     deleteAllSecurity((err) => {

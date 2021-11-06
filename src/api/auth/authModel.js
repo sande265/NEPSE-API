@@ -42,7 +42,7 @@ module.exports = {
                 The password for your account is ${password},<br />
                 Thank you.</p><br />
                 <br />
-                <p>&copy; ${year} Sandesh Singh, All Rights Reserved</p>
+                <p>&copy; ${year} Mero Portfolio, All Rights Reserved</p>
             `
         };
         transporter.sendMail(mailOptions, (err, result) => {
