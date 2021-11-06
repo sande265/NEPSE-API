@@ -75,7 +75,7 @@ module.exports = {
     getLoggedUser: (req, res) => {
         let token = req.headers.authorization || req.headers.auth
         token = token && token.split(" ")[1]
-        const decoded = jwt(token)
+        const decoded = jwtDecode(token)
         getUserById(decoded.sub, (err, result) => {
             if (err) res.status(204)
             if (result) res.status(200).json({
@@ -86,7 +86,7 @@ module.exports = {
     getUsers: (req, res) => {
         let token = req.headers.authorization || req.headers.auth
         token = token && token.split(" ")[1]
-        const decoded = jwt(token)
+        const decoded = jwtDecode(token)
         getUserById(decoded.sub, (err, result) => {
             let user = result[0]
             if (user.role === 'admin') {
